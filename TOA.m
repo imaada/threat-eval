@@ -23,5 +23,5 @@ vecnormal = vecnormal./vecnormal(end);
 
 timearray = max_time * vecnormal;
 
-disp(timearray)
+%disp(timearray)
 end
