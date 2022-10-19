@@ -3,16 +3,32 @@
 
 tic
 
+%Create hex mesh
+scale = 34.641016151377531741097853660240657828156662760086052142215113918;
+rad3over2 = (sqrt(3)/2);
+[X, Y] = meshgrid(0:1:5);
+n = size(X,1);
+X = rad3over2 * X;
+Y = Y + repmat([0 0.5], [n,n/2]);
+%scale to make edge length = 40
+X = scale*X;
+Y=scale*Y;
+
+%returns vertices of edges, each column is an edge
+[XV, YV] = voronoi(X(:),Y(:));
+plot(XV,YV,'r-')
+axis equal
+axis([0 160 0 180])
+zoom on
+
 for i = 1:1
     
     clear scenario;
     clear attribute_vec;
     RunTime = 30;
     scenario = createScenario(RunTime);
-    %positions = zeros(RunTime*10+1,3);
-    eulerangles = zeros(RunTime*10,3);
-    %distance2tower = zeros(RunTime*10,3);
-    attribute_vec = zeros(RunTime*10,5);
+    attribute_vec = zeros(RunTime*10,8);
+    attackIntention = zeros(1,3);
     WhileIndex = 1;
 
     [tp, platp, detp, covp] = createPlotters();
@@ -23,23 +39,40 @@ for i = 1:1
     
     % Main simulation loop
     while advance(scenario) && ishghandle(tp.Parent)
+
+      
         % generate sensor data
         [dets, configs, sensorConfigPIDs] = detect(scenario);
         
         [truePosition, meas, measCov, e, velocity] = readData(scenario, dets);
+        
+        %eulerangles(WhileIndex,:) = [e];
+       
+        %angle bw 2 vectors a & b is inverse cos (a dot b / mag(a) * mag(b))
+           Tower1Pos = truePosition(2,:);
+           Tower2Pos = truePosition(3,:);
+           Tower3Pos = truePosition(4,:);
+        if WhileIndex ~= 1
+            normTower = norm(truePosition(1,:)-truePosition(2,:));
+            a = [Tower1Pos(1,2)-PlanePosition(1,2),Tower1Pos(1,1)-PlanePosition(1,1),0];
+            b = [PlanePosition(1,2)-attribute_vec(WhileIndex-1,2),PlanePosition(1,1)-attribute_vec(WhileIndex-1,1),0];
+            attackTheta2 = acosd((dot(a,b))/(norm(a)*norm(b)));
+            attackIntention(1) = norm(velocity)*cosd(attackTheta2)/normTower;
 
-        
-        
-        normTower = norm(truePosition(1,:)-truePosition(2,:));
-        eulerangles(WhileIndex,:) = [e];
-        
-        PlanePosition = truePosition(1,:);
-        TowerPosition =    truePosition(2,:);
-        
-        attackTheta = atand((PlanePosition(1,2)-TowerPosition(1,2))/(PlanePosition(1,1)-TowerPosition(1,1)));
-        attackIntention = norm(velocity)*cosd(attackTheta)/normTower;
+            normTower = norm(truePosition(1,:)-truePosition(3,:));
+            a = [Tower2Pos(1,2)-PlanePosition(1,2),Tower2Pos(1,1)-PlanePosition(1,1),0];
+            b = [PlanePosition(1,2)-attribute_vec(WhileIndex-1,2),PlanePosition(1,1)-attribute_vec(WhileIndex-1,1),0];
+            attackTheta2 = acosd((dot(a,b))/(norm(a)*norm(b)));
+            attackIntention(2) = norm(velocity)*cosd(attackTheta2)/normTower;
 
-        attribute_vec(WhileIndex,:) = [truePosition(1,:),e(1,3),attackIntention];
+            normTower = norm(truePosition(1,:)-truePosition(4,:));
+            a = [Tower3Pos(1,2)-PlanePosition(1,2),Tower3Pos(1,1)-PlanePosition(1,1),0];
+            b = [PlanePosition(1,2)-attribute_vec(WhileIndex-1,2),PlanePosition(1,1)-attribute_vec(WhileIndex-1,1),0];
+            attackTheta2 = acosd((dot(a,b))/(norm(a)*norm(b)));
+            attackIntention(3) = norm(velocity)*cosd(attackTheta2)/normTower;
+        
+        end 
+        attribute_vec(WhileIndex,:) = [HexGrid(X,Y,[truePosition(1,1),truePosition(1,2)]),truePosition(1,:),e(1,3),attackIntention];
 
         WhileIndex = WhileIndex +1;
         % update your tracker here:
@@ -53,7 +86,7 @@ for i = 1:1
         
 %         drawnow
     end
-    writematrix(attribute_vec,sprintf('positions_%u.csv', i)); 
+    writematrix(attribute_vec,sprintf('C:/Users/i_maa/Desktop/Thesis/Data/atrribute_vec%u.csv', i)); 
     %writematrix(eulerangles,sprintf('eulerangles_%u.csv', i)); 
 
 end
@@ -132,7 +165,23 @@ Tower.Dimensions = struct( ...
     'Width', 10, ...
     'Height', 60, ...
     'OriginOffset', [0 0 30]);
-Tower.Trajectory.Position = [100000 15000 0];
+Tower.Trajectory.Position = [140, 70,0];
+
+Tower = platform(scenario,'ClassID',4);
+Tower.Dimensions = struct( ...
+    'Length', 10, ...
+    'Width', 10, ...
+    'Height', 60, ...
+    'OriginOffset', [0 0 30]);
+Tower.Trajectory.Position = [110, 120,0];   
+
+Tower = platform(scenario,'ClassID',5);
+Tower.Dimensions = struct( ...
+    'Length', 10, ...
+    'Width', 10, ...
+    'Height', 60, ...
+    'OriginOffset', [0 0 30]);
+Tower.Trajectory.Position = [140, 90,0];
 
 % Create sensors
 Rotator = fusionRadarSensor('SensorIndex', 1, ...
