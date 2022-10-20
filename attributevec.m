@@ -21,15 +21,27 @@ axis equal
 axis([0 160 0 180])
 zoom on
 
+hex_label = 0;
+for i  = 1:n
+    for j =1:n
+        hex_label = hex_label +1;
+        %inserts text on graph
+        text(X(i,j),Y(i,j),int2str(hex_label),'HorizontalAlignment','center')        
+    end
+end
+
 for i = 1:1
     
     clear scenario;
     clear attribute_vec;
     RunTime = 30;
     scenario = createScenario(RunTime);
-    attribute_vec = zeros(RunTime*10,8);
+    attribute_vec = zeros(RunTime*10,9);
     attackIntention = zeros(1,3);
+    CellData = zeros(RunTime*10,1);
     WhileIndex = 1;
+    ProbabilityIndex = [60 120 180 240 300 360];
+    %[P60 P120 P180 P240 P300 P360] = 
 
     [tp, platp, detp, covp] = createPlotters();
     
@@ -46,12 +58,15 @@ for i = 1:1
         
         [truePosition, meas, measCov, e, velocity] = readData(scenario, dets);
         
-        %eulerangles(WhileIndex,:) = [e];
        
         %angle bw 2 vectors a & b is inverse cos (a dot b / mag(a) * mag(b))
-           Tower1Pos = truePosition(2,:);
-           Tower2Pos = truePosition(3,:);
-           Tower3Pos = truePosition(4,:);
+        PlanePosition = truePosition(1,:);
+        Tower1Pos = truePosition(2,:);
+        Tower2Pos = truePosition(3,:);
+        Tower3Pos = truePosition(4,:);
+        index = 0;
+        CellData(WhileIndex) = HexGrid(X,Y,[truePosition(1,1),truePosition(1,2)]);
+
         if WhileIndex ~= 1
             normTower = norm(truePosition(1,:)-truePosition(2,:));
             a = [Tower1Pos(1,2)-PlanePosition(1,2),Tower1Pos(1,1)-PlanePosition(1,1),0];
@@ -70,10 +85,40 @@ for i = 1:1
             b = [PlanePosition(1,2)-attribute_vec(WhileIndex-1,2),PlanePosition(1,1)-attribute_vec(WhileIndex-1,1),0];
             attackTheta2 = acosd((dot(a,b))/(norm(a)*norm(b)));
             attackIntention(3) = norm(velocity)*cosd(attackTheta2)/normTower;
+            
+            if CellData(WhileIndex) - CellData(WhileIndex -1) ~= 0
+                pointer = 1;
+                first_pt = zeros(1,2);
+                second_pt = zeros(1,2);
+                for m  = 1:n
+                    for j =1:n
+                        if pointer == CellData(WhileIndex)
+                            second_pt = [X(m,j),Y(m,j)];
+                        end
+                        pointer= pointer +1;
+                       
+                    end
+                end
+                
+                pointer = 1;
+                for m  = 1:n
+                    for j =1:n
+                        if pointer == CellData(WhileIndex-1)
+                            first_pt = [X(m,j),Y(m,j)];
+                        end
+                        pointer= pointer +1;        
+                    end
+                end
+
+               slope =  (second_pt(2)-first_pt(2))/(second_pt(1)-first_pt(1));
+               index = atand(slope);
+
+            end
         
         end 
-        attribute_vec(WhileIndex,:) = [HexGrid(X,Y,[truePosition(1,1),truePosition(1,2)]),truePosition(1,:),e(1,3),attackIntention];
+        
 
+        attribute_vec(WhileIndex,:) = [index,CellData(WhileIndex),truePosition(1,:),e(1,3),attackIntention];
         WhileIndex = WhileIndex +1;
         % update your tracker here:
         
