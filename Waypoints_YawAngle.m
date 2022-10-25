@@ -1,7 +1,7 @@
 function waypoints = Waypoints_YawAngle(NumberofWaypoints)
 
-origins = [10,20,0; 100,5,0; 75,12,0];
-origin = origins(randi(3),:);
+origins = [10,20,0; 100,5,0; 75,100,0;100,100,0;120,150,0;150,60,0];
+origin = origins(randi(6),:);
 
 YawAngle = [0,90];
 section_length = 20;

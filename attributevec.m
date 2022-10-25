@@ -6,7 +6,7 @@ tic
 %Create hex mesh
 scale = 34.641016151377531741097853660240657828156662760086052142215113918;
 rad3over2 = (sqrt(3)/2);
-[X, Y] = meshgrid(0:1:5);
+[X, Y] = meshgrid(0:1:7);
 n = size(X,1);
 X = rad3over2 * X;
 Y = Y + repmat([0 0.5], [n,n/2]);
@@ -18,9 +18,29 @@ Y=scale*Y;
 [XV, YV] = voronoi(X(:),Y(:));
 plot(XV,YV,'r-')
 axis equal
-axis([0 160 0 180])
+axis([0 210 0 250])
 zoom on
+hold on
 
+% plot Waypoints_YawAngle line on hex
+NumberofWaypoints = 5;
+rng('shuffle');
+waypoints = Waypoints_YawAngle(NumberofWaypoints);
+%plot(waypoints(:,1), waypoints(:,2));
+
+waypoints1 = [-waypoints(:,1)+max(waypoints(:,1)+50), waypoints(:,2),waypoints(:,3)];
+%plot(waypoints1(:,1), waypoints1(:,2))
+
+waypoints2 = [waypoints(:,1), -waypoints(:,2)+max(waypoints(:,2)+50),waypoints(:,3)];
+%plot(waypoints2(:,1), waypoints2(:,2));
+
+waypoints3 = [-waypoints(:,1)+max(waypoints(:,1)+50), -waypoints(:,2)+max(waypoints(:,2)+50),waypoints(:,3)];
+plot(waypoints3(:,1), waypoints3(:,2),'b');
+
+
+hold off
+
+%Add text to hex mesh
 hex_label = 0;
 for i  = 1:n
     for j =1:n
@@ -30,18 +50,18 @@ for i  = 1:n
     end
 end
 
-for i = 1:1
-    
+for i = 1:5
+        
     clear scenario;
     clear attribute_vec;
     RunTime = 30;
-    scenario = createScenario(RunTime);
-    attribute_vec = zeros(RunTime*10,9);
+    scenario = createScenario(RunTime,waypoints3,NumberofWaypoints);
+    attribute_vec = zeros(RunTime*1,9);
     attackIntention = zeros(1,3);
-    CellData = zeros(RunTime*10,1);
+    CellData = zeros(RunTime*1,1);
     WhileIndex = 1;
-    ProbabilityIndex = [60 120 180 240 300 360];
-    %[P60 P120 P180 P240 P300 P360] = 
+    lookup_table = [ 0 30 90 150 -150 -90 -30];
+    %[P60 P120 P180 P240 P300 P360] = [30 90 -30 30 -90 -30]
 
     [tp, platp, detp, covp] = createPlotters();
     
@@ -87,9 +107,10 @@ for i = 1:1
             attackIntention(3) = norm(velocity)*cosd(attackTheta2)/normTower;
             
             if CellData(WhileIndex) - CellData(WhileIndex -1) ~= 0
+                first_pt = zeros(1,2);%hex centre of origin hex
+                second_pt = zeros(1,2);%hex centre of new hex
+
                 pointer = 1;
-                first_pt = zeros(1,2);
-                second_pt = zeros(1,2);
                 for m  = 1:n
                     for j =1:n
                         if pointer == CellData(WhileIndex)
@@ -109,16 +130,18 @@ for i = 1:1
                         pointer= pointer +1;        
                     end
                 end
-
-               slope =  (second_pt(2)-first_pt(2))/(second_pt(1)-first_pt(1));
-               index = atand(slope);
-
+                
+%                slope =  (second_pt(2)-first_pt(2))/(second_pt(1)-first_pt(1)); 
+               index = atan2d((second_pt(2)-first_pt(2)),(second_pt(1)-first_pt(1)));%angle of movement to adjacent hex
+               index = find(lookup_table==index);
+%               
+               attribute_vec(WhileIndex-1,1) = index;
             end
         
         end 
         
 
-        attribute_vec(WhileIndex,:) = [index,CellData(WhileIndex),truePosition(1,:),e(1,3),attackIntention];
+        attribute_vec(WhileIndex,:) = [0,CellData(WhileIndex),truePosition(1,:),e(1,3),attackIntention];
         WhileIndex = WhileIndex +1;
         % update your tracker here:
         
@@ -170,12 +193,11 @@ covp = coveragePlotter(tp,'DisplayName','Sensor Coverage');
 end
 
 
-function scenario = createScenario(RunTime)
+function scenario = createScenario(RunTime,waypoints,NumberofWaypoints)
 % Create Scenario
-rng('shuffle');
-
-NumberofWaypoints = 5;
-waypoints = Waypoints_YawAngle(NumberofWaypoints);
+%NumberofWaypoints = 5;
+%rng('shuffle');
+%waypoints = Waypoints_YawAngle(NumberofWaypoints);
 timearray = TOA(waypoints, RunTime);
 
 scenario = trackingScenario;
@@ -230,7 +252,7 @@ Tower.Trajectory.Position = [140, 90,0];
 
 % Create sensors
 Rotator = fusionRadarSensor('SensorIndex', 1, ...
-    'UpdateRate', 10, ...
+    'UpdateRate', 1, ...
     'MountingLocation', [0 -0.06 0], ...
     'FieldOfView', [1 10], ...
     'HasINS', true, ...
