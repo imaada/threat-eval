@@ -1,4 +1,4 @@
-function index = HexGrid(X,Y,test_position)
+function [index,x_centre,y_centre ]= HexGrid(X,Y,test_position)
 
 
 %determines edge length
@@ -12,7 +12,7 @@ n = size(X,1);
 
 total_hex = n*n;
 dist2centres = zeros(1,total_hex);
-
+cell_centres = zeros(total_hex,2);
 hex_label = 0;
 for i  = 1:n
     for j =1:n
@@ -22,14 +22,16 @@ for i  = 1:n
         
         %finds closest hex centre
         dist2centres(hex_label) = norm(test_position - [X(i,j),Y(i,j)]);
-        
+        cell_centres(hex_label,:) = [X(i,j),Y(i,j)];
     end
 end
 
 
-[M, I] = min(dist2centres);
+[M, index] = min(dist2centres);
+x_centre = cell_centres(index,1);
+y_centre = cell_centres(index,2);
 %disp(I)
-index = I;
+%index = I;
 
 
 %toc
