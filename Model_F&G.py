@@ -23,7 +23,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 78,
+   "execution_count": 2,
    "id": "b4fc5380",
    "metadata": {},
    "outputs": [],
@@ -57,13 +57,13 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 79,
+   "execution_count": 4,
    "id": "fa93a8e7",
    "metadata": {},
    "outputs": [],
    "source": [
     "#seperate train and test files for g\n",
-    "INPUT_DATA_DIR = \"../../mnt/c/Users/i_maa/Desktop/Thesis/Data_g/\" #should be \"../../mnt/c/Users/i_maa/Desktop/Thesis/Data/\"\n",
+    "INPUT_DATA_DIR = \"../../mnt/c/Users/i_maa/Desktop/Thesis/Data/Data_g/\" #should be \"../../mnt/c/Users/i_maa/Desktop/Thesis/Data/\"\n",
     "#INPUT_DATA_DIR = \"Desktop/Thesis/Data_g/\"\n",
     "TRAIN_DATA_COEFFICIENT = 0.8\n",
     "\n",
@@ -82,7 +82,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 87,
+   "execution_count": 5,
    "id": "249b395d",
    "metadata": {},
    "outputs": [],
@@ -115,7 +115,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 81,
+   "execution_count": 6,
    "id": "48f5dca8",
    "metadata": {
     "scrolled": false
@@ -144,7 +144,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 82,
+   "execution_count": 8,
    "id": "1ae735dc",
    "metadata": {
     "scrolled": true
@@ -154,17 +154,17 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Model: \"sequential_6\"\n",
+      "Model: \"sequential_1\"\n",
       "_________________________________________________________________\n",
       " Layer (type)                Output Shape              Param #   \n",
       "=================================================================\n",
-      " dense_24 (Dense)            (None, 7)                 56        \n",
+      " dense_4 (Dense)             (None, 7)                 56        \n",
       "                                                                 \n",
-      " dense_25 (Dense)            (None, 50)                400       \n",
+      " dense_5 (Dense)             (None, 50)                400       \n",
       "                                                                 \n",
-      " dense_26 (Dense)            (None, 50)                2550      \n",
+      " dense_6 (Dense)             (None, 50)                2550      \n",
       "                                                                 \n",
-      " dense_27 (Dense)            (None, 7)                 357       \n",
+      " dense_7 (Dense)             (None, 7)                 357       \n",
       "                                                                 \n",
       "=================================================================\n",
       "Total params: 3,363\n",
@@ -172,25 +172,25 @@
       "Non-trainable params: 0\n",
       "_________________________________________________________________\n",
       "Epoch 1/10\n",
-      "160/160 [==============================] - 4s 22ms/step - loss: 1.5539 - accuracy: 0.5335 - val_loss: 1.0029 - val_accuracy: 0.6318\n",
+      "160/160 [==============================] - 3s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 2/10\n",
-      "160/160 [==============================] - 3s 16ms/step - loss: 0.8090 - accuracy: 0.7119 - val_loss: 0.6903 - val_accuracy: 0.7909\n",
+      "160/160 [==============================] - 2s 13ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 3/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.5996 - accuracy: 0.7830 - val_loss: 0.5584 - val_accuracy: 0.8205\n",
+      "160/160 [==============================] - 2s 13ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 4/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.5123 - accuracy: 0.8091 - val_loss: 0.4957 - val_accuracy: 0.8273\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 5/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.4651 - accuracy: 0.8222 - val_loss: 0.4692 - val_accuracy: 0.8409\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 6/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.4347 - accuracy: 0.8403 - val_loss: 0.4627 - val_accuracy: 0.8295\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 7/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.4133 - accuracy: 0.8477 - val_loss: 0.4478 - val_accuracy: 0.8341\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 8/10\n",
-      "160/160 [==============================] - 3s 16ms/step - loss: 0.3975 - accuracy: 0.8523 - val_loss: 0.4298 - val_accuracy: 0.8364\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 9/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.3855 - accuracy: 0.8540 - val_loss: 0.4291 - val_accuracy: 0.8409\n",
+      "160/160 [==============================] - 2s 13ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "Epoch 10/10\n",
-      "160/160 [==============================] - 2s 15ms/step - loss: 0.3736 - accuracy: 0.8551 - val_loss: 0.4235 - val_accuracy: 0.8432\n",
+      "160/160 [==============================] - 2s 14ms/step - loss: nan - accuracy: 0.5430 - val_loss: nan - val_accuracy: 0.5447\n",
       "INFO:tensorflow:Assets written to: G/assets\n"
      ]
     }
@@ -266,7 +266,15 @@
    "execution_count": null,
    "id": "bbaccd5d",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   8945/Unknown - 114s 13ms/step - loss: nan - accuracy: 0.5448"
+     ]
+    }
+   ],
    "source": [
     "test_loss, test_acc = model.evaluate(test_dataset_g)\n",
     "\n",
